@@ -74,7 +74,7 @@ BUCKET_CONFIG = {
 }
 
 # Output file for collected papers
-OUTPUT_FILE = "arxiv_papers.json"
+OUTPUT_FILE = "prototype/arxiv_papers.json"
 
 
 # =============================================================================

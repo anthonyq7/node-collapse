@@ -1,4 +1,4 @@
-import asyncio, json, os
+import asyncio, json, os, random, re
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from typing import List, Dict
@@ -9,64 +9,44 @@ load_dotenv()
 MIN_CITATIONS = 5
 MAX_CITATIONS = 10
 POOLED_PAPERS = []
-TOTAL_NODES = 5
+TOTAL_NODES = 6
 MODEL = "gpt-5-mini"
 MAX_CONCURRENT = 5
 TARGET_LENGTH = 500
-TOPIC = "Attention mechanisms in natural language processing/deep learning"
-
-SYSTEM_PROMPT = """
-You are an expert academic researcher specializing in writing comprehensive literature reviews.
-
-You must output your response as valid JSON with this exact structure:
-
-{
-    "title": "Your literature review title here",
-    "review": "Your literature review text here with inline citations...",
-    "cited_ids": ["SEED_0", "N1P2", etc.]
-}
-
-IMPORTANT:
-- Output ONLY valid JSON, no other text
-- The "review" field contains the full literature review text
-- The "cited_ids" field is an array of article IDs you referenced
-- Include each unique ID only once in the array
-- ONLY cite from the available pool of articles
-- YOU MUST cite only using the IDs, NO authors or publish dates
-"""
-
+SEED = 42
+PAPER_SET_LENGTH = 30
+TOPIC = "Knowledge distillation or model compression in deep learning or NLP"
 client = AsyncOpenAI()
 CITATION_COUNTS = defaultdict(int)
 POSSIBLE_PAPER_IDS = set()
 
+SYSTEM_PROMPT = """
+    You are a researcher writing about a topic using a provided set of articles.
+    When referencing an article, cite it inline using only its ID (e.g., SEED_0, N1P2).
+    Do not use author names, publication dates, or any other identifying information.
+    Output valid JSON only:
+    {
+        "title": "...",
+        "review": "... inline citations only ..."
+    }
+    """
+
+def create_set():
+    return random.sample(POOLED_PAPERS, 30)
 
 async def generate_paper(paper_id: str, semaphore = asyncio.Semaphore(MAX_CONCURRENT)):
 
-    USER_PROMPT = f"""I need you to write a comprehensive literature review. 
+    random_papers = create_set()
 
-    LITERATURE REVIEW REQUIREMENTS:
+    USER_PROMPT = f"""
+    Write about the following topic using only the articles provided below.
+    Synthesize what these articles say about the topic. 
+    Support claims by citing relevant articles by ID.
+
     Topic: {TOPIC}
 
-    Writing Guidelines:
-    - Synthesize findings across papers thematically, don't just summarize each paper individually
-    - Identify key trends, patterns, and developments in the field
-    - Highlight consensus areas and points of debate or contradiction
-    - Note any significant gaps in the literature
-    - Organize by themes/topics, not chronologically or by paper
-    - Use inline citations in the format: (Author et al., Year)
-    - Target length: {TARGET_LENGTH} words
-
-    CITATION REQUIREMENTS:
-    - Only cite papers from the provided list below
-    - Track every article you cite using its "id" field
-    - You must return all cited IDs in the "cited_ids" array in your JSON response
-    - It's okay to cite a paper multiple times, but only include its ID once in the final list
-    - Only cite between {MIN_CITATIONS} to {MAX_CITATIONS} different papers. 
-
-    AVAILABLE ARTICLES:
-    Below is a list of research articles in JSON format. Each article has an "id" field - this is what you'll use to track citations.
-
-    {POOLED_PAPERS}
+    Articles:
+    {random_papers}
     """
 
     PROMPT = [
@@ -103,13 +83,14 @@ async def generate_paper(paper_id: str, semaphore = asyncio.Semaphore(MAX_CONCUR
                 )
 
                 if not response:
-                    return paper_id, None
+                    return paper_id, None, random_papers
             
             # Print token usage
             if response.usage:
                 print(f"[{paper_id}] Input: {response.usage.prompt_tokens} tokens | Output: {response.usage.completion_tokens} tokens | Total: {response.usage.total_tokens} tokens")
+                print(f"Number of input papers: {len(random_papers)}")
             
-            return paper_id, response.choices[0].message.content
+            return paper_id, response.choices[0].message.content, random_papers
 
         except Exception as e:
             print(f"API Error: {e}")
@@ -132,9 +113,9 @@ async def generate_node(node: int):
         wrapped_tasks.append(generate_paper(f"N{node}P{i}"))
         id_list.append(f"N{node}P{i}")
 
-    with open(f"output/node_{node}/node_{node}.jsonl", "w") as f:
+    with open(f"alpha/output/node_{node}/node_{node}.jsonl", "w") as f, open(f"alpha/output/node_{node}/node_{node}_inputs.jsonl", "w") as f_i:
         for task in asyncio.as_completed(wrapped_tasks):
-            paper_id, json_response = await task
+            paper_id, json_response, papers_seen = await task
 
             if not json_response:
                 print(f"{paper_id} was empty...")
@@ -146,19 +127,19 @@ async def generate_node(node: int):
 
             title = json_response.get("title", "").strip()
             review = json_response.get("review", "").strip()
-            citations = json_response.get("cited_ids")
+            
+            citations = list(get_citations(review))
 
-            if citations:
-                for c in citations:
-                    if c in POSSIBLE_PAPER_IDS:
-                        CITATION_COUNTS[c] += 1
-                
+            papers_id_seen = []
+            for p in papers_seen:
+                papers_id_seen.append(p.get("id"))
             
             toDump = {
                 "id": paper_id,
                 "title": title,
-                "review": review,
-                "citations": citations
+                "content": review,
+                "citations": citations, 
+                "papers_seen": papers_id_seen
             }
 
             for cite in citations:
@@ -167,13 +148,20 @@ async def generate_node(node: int):
             new_paper = {
                 "id": paper_id,
                 "title": title,
-                "review": review
+                "content": review
+            }
+
+            input_papers = {
+                "id": paper_id,
+                "papers_seen": papers_seen
             }
 
             POOLED_PAPERS.append(new_paper)
             
             f.write(json.dumps(toDump) + "\n")
+            f_i.write(json.dumps(input_papers) + "\n")
             f.flush()
+            f_i.flush()
 
     print("\n")
     print(30*"=")
@@ -181,7 +169,7 @@ async def generate_node(node: int):
     print(30*"=")
     print("\n")
 
-    with open(f"output/node_{node}/node_{node}_stats.jsonl", "w") as f:
+    with open(f"alpha/output/node_{node}/node_{node}_stats.jsonl", "w") as f:
         for k, v in node_citations.items():
             f.write(json.dumps({k:v}) + "\n")
             print(f"{k}: {v}")
@@ -191,21 +179,25 @@ async def generate_node(node: int):
     for id in id_list:
         POSSIBLE_PAPER_IDS.add(id)
 
-def get_arxiv():
+def get_seed():
     try:
-        with open("arxiv_papers.json") as f:
-            pooled = json.load(f)
-            return pooled
+        pooled = []
+        with open("alpha/buckets/bucket_100_249.jsonl") as f:
+            for paper in f:
+                pooled.append(json.loads(paper))
+            
+        return pooled
     except FileNotFoundError as e:
-        print(f"arxiv_papers.json not found...")
+        print(f"alpha/buckets/bucket_100_249.jsonl not found...")
         return None
 
-def standardize_arxiv() -> List[Dict]:
-    arxiv = get_arxiv()
-    if not arxiv:
+def standardize_seed() -> List[Dict]:
+    seed = get_seed()
+    if not seed:
         return False
 
-    papers = arxiv.get("bucket_20_100")
+    papers = seed
+
     arxiv_list = []
     arxiv_citation_count = []
 
@@ -218,7 +210,7 @@ def standardize_arxiv() -> List[Dict]:
         output_object = {
             "id": paper_id,
             "title": title,
-            "abstract": abstract
+            "content": abstract
         }
 
         citation_object = {
@@ -231,35 +223,42 @@ def standardize_arxiv() -> List[Dict]:
         POSSIBLE_PAPER_IDS.add(paper_id)
         CITATION_COUNTS[paper_id] = citation_count
     
-    with open("output/seed/seed_initial.jsonl", "w") as f:
+    with open("alpha/output/seed/seed_initial.jsonl", "w") as f:
         for k, v in CITATION_COUNTS.items():
             item = {k : v}
             f.write(json.dumps(item) + "\n")
 
-    with open("output/seed/seed.jsonl", "w") as f:
+    with open("alpha/output/seed/seed.jsonl", "w") as f:
         for item in arxiv_list:
             f.write(json.dumps(item) + "\n")   
 
     return arxiv_list 
 
+def get_citations(text: str):
+    pattern = r"\b(SEED_\d+|N\d+P\d+)\b"
+    return set(re.findall(pattern, text))
+
+
 async def run_experiment():
 
+    random.seed(SEED)
+
     #Make output directories 
-    os.makedirs("output/seed", exist_ok=True)
-    os.makedirs("output/master", exist_ok=True)
-    os.makedirs("output/citation_counts", exist_ok=True)
+    os.makedirs("alpha/output/seed", exist_ok=True)
+    os.makedirs("alpha/output/master", exist_ok=True)
+    os.makedirs("alpha/output/citation_counts", exist_ok=True)
 
     #standardizes arXiv papers and adds them to the pool
     #Additionally, saves the initial citation counts + add another running citation count to citation_counts
-    POOLED_PAPERS.extend(standardize_arxiv())
+    POOLED_PAPERS.extend(standardize_seed())
 
     for i in range(TOTAL_NODES):
-        os.makedirs(f"output/node_{i}", exist_ok=True)
+        os.makedirs(f"alpha/output/node_{i}", exist_ok=True)
     
     for i in range(TOTAL_NODES):
         await generate_node(i)
 
-    with open("output/citation_counts/citation_counts.jsonl", "w") as f:
+    with open("alpha/output/citation_counts/citation_counts.jsonl", "w") as f:
         for item in CITATION_COUNTS:
             f.write(json.dumps(item) + "\n")
 

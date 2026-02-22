@@ -1,11 +1,11 @@
 import json
 from collections import defaultdict
 
-MAX_NODES = 5
+MAX_NODES = 6
 citations = defaultdict(int)
 
 for node in range(MAX_NODES):
-    with open(f"output/node_{node}/node_{node}_stats.jsonl") as f:
+    with open(f"alpha/output/node_{node}/node_{node}_stats.jsonl") as f:
         for line in f:
             data = json.loads(line.strip())
             for k, v in data.items():
