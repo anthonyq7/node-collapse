@@ -1,6 +1,6 @@
-{"node": 0, "available": 30, "cited": 30, "uncited": 0, "exclusion_rate": 0.0}
-{"node": 1, "available": 60, "cited": 60, "uncited": 0, "exclusion_rate": 0.0}
-{"node": 2, "available": 90, "cited": 90, "uncited": 0, "exclusion_rate": 0.0}
-{"node": 3, "available": 120, "cited": 116, "uncited": 4, "exclusion_rate": 0.0333}
-{"node": 4, "available": 150, "cited": 148, "uncited": 2, "exclusion_rate": 0.0133}
-{"node": 5, "available": 180, "cited": 170, "uncited": 10, "exclusion_rate": 0.0556}
+{"node": 0, "available": 30, "cited": 30, "shown_ignored": 0, "never_shown": 0, "uncited": 0, "exclusion_rate": 0.0, "shown_ignored_rate": 0.0, "never_shown_rate": 0.0}
+{"node": 1, "available": 60, "cited": 60, "shown_ignored": 0, "never_shown": 0, "uncited": 0, "exclusion_rate": 0.0, "shown_ignored_rate": 0.0, "never_shown_rate": 0.0}
+{"node": 2, "available": 90, "cited": 90, "shown_ignored": 0, "never_shown": 0, "uncited": 0, "exclusion_rate": 0.0, "shown_ignored_rate": 0.0, "never_shown_rate": 0.0}
+{"node": 3, "available": 120, "cited": 116, "shown_ignored": 4, "never_shown": 0, "uncited": 4, "exclusion_rate": 0.0333, "shown_ignored_rate": 0.0333, "never_shown_rate": 0.0}
+{"node": 4, "available": 150, "cited": 148, "shown_ignored": 2, "never_shown": 0, "uncited": 2, "exclusion_rate": 0.0133, "shown_ignored_rate": 0.0133, "never_shown_rate": 0.0}
+{"node": 5, "available": 180, "cited": 170, "shown_ignored": 8, "never_shown": 2, "uncited": 10, "exclusion_rate": 0.0556, "shown_ignored_rate": 0.0444, "never_shown_rate": 0.0111}

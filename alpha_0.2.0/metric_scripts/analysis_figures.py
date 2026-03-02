@@ -190,20 +190,29 @@ fig.tight_layout()
 fig.savefig(os.path.join(OUTPUT_DIR, "avg_citation_exposure_rate_by_node.png"), dpi=150)
 print("Saved avg_citation_exposure_rate_by_node.png")
 
-# ── 4. Exclusion Rate By Node ────────────────────────────────────────────────
+# ── 4. Exclusion Rate By Node (Shown-but-Ignored vs Never-Shown) ─────────────
 
 excl_results = []
 for s in gen_stats:
+    node = s["node"]
     available = s["available_papers"]
-    cited = s["unique_papers_cited"]
-    uncited = available - cited
-    rate = round(uncited / available, 4) if available > 0 else 0.0
+    entries = load_exposure(node)
+
+    cited = sum(1 for e in entries if e["citations"] > 0)
+    shown_ignored = sum(1 for e in entries if e["exposures"] > 0 and e["citations"] == 0)
+    never_shown = available - len(entries)
+    uncited = shown_ignored + never_shown
+
     excl_results.append({
-        "node": s["node"],
+        "node": node,
         "available": available,
         "cited": cited,
+        "shown_ignored": shown_ignored,
+        "never_shown": never_shown,
         "uncited": uncited,
-        "exclusion_rate": rate,
+        "exclusion_rate": round(uncited / available, 4) if available > 0 else 0.0,
+        "shown_ignored_rate": round(shown_ignored / available, 4) if available > 0 else 0.0,
+        "never_shown_rate": round(never_shown / available, 4) if available > 0 else 0.0,
     })
 
 with open(os.path.join(OUTPUT_DIR, "exclusion_rate_by_node.jsonl"), "w") as f:
@@ -212,30 +221,35 @@ with open(os.path.join(OUTPUT_DIR, "exclusion_rate_by_node.jsonl"), "w") as f:
 print("Saved exclusion_rate_by_node.jsonl")
 
 nodes = [r["node"] for r in excl_results]
+shown_ignored = [r["shown_ignored"] for r in excl_results]
+never_shown = [r["never_shown"] for r in excl_results]
 excl_rates = [r["exclusion_rate"] for r in excl_results]
-uncited_counts = [r["uncited"] for r in excl_results]
 
-fig, ax1 = plt.subplots(figsize=(9, 5))
-bars = ax1.bar(nodes, uncited_counts, color="#4472C4", alpha=0.7, label="Uncited Papers")
-ax1.bar_label(bars, padding=2, fontsize=9)
+fig, ax1 = plt.subplots(figsize=(10, 5))
+x = np.arange(len(nodes))
+b1 = ax1.bar(x, shown_ignored, color="#E74C3C", alpha=0.8, label="Shown but Ignored")
+b2 = ax1.bar(x, never_shown, bottom=shown_ignored, color="#95A5A6", alpha=0.7, label="Never Shown")
+ax1.bar_label(b1, padding=2, fontsize=8)
+ax1.bar_label(b2, padding=2, fontsize=8)
 ax1.set_xlabel("Node (Generation)")
-ax1.set_ylabel("Uncited Papers", color="#4472C4")
-ax1.set_xticks(nodes)
+ax1.set_ylabel("Uncited Papers")
+ax1.set_xticks(x)
 ax1.set_xticklabels([f"Node {n}" for n in nodes])
 
 ax2 = ax1.twinx()
-ax2.plot(nodes, excl_rates, color="#C0392B", marker="o", linewidth=2, label="Exclusion Rate")
+ax2.plot(x, excl_rates, color="#2C3E50", marker="o", linewidth=2, label="Exclusion Rate")
 for i, rate in enumerate(excl_rates):
-    ax2.annotate(f"{rate:.1%}", (nodes[i], rate), textcoords="offset points",
-                 xytext=(0, 10), ha="center", fontsize=8, color="#C0392B")
-ax2.set_ylabel("Exclusion Rate", color="#C0392B")
-ax2.set_ylim(-0.01, max(excl_rates) * 1.5 + 0.02)
+    ax2.annotate(f"{rate:.1%}", (x[i], rate), textcoords="offset points",
+                 xytext=(0, 10), ha="center", fontsize=8, color="#2C3E50")
+ax2.set_ylabel("Exclusion Rate", color="#2C3E50")
+max_rate = max(excl_rates) if max(excl_rates) > 0 else 0.05
+ax2.set_ylim(-0.01, max_rate * 1.5 + 0.02)
 
 lines1, labels1 = ax1.get_legend_handles_labels()
 lines2, labels2 = ax2.get_legend_handles_labels()
 ax1.legend(lines1 + lines2, labels1 + labels2, loc="upper left")
 
-fig.suptitle("Exclusion Rate by Node", fontsize=13)
+fig.suptitle("Exclusion Rate by Node (Shown-but-Ignored vs Never-Shown)", fontsize=12)
 fig.tight_layout()
 fig.savefig(os.path.join(OUTPUT_DIR, "exclusion_rate_by_node.png"), dpi=150)
 print("Saved exclusion_rate_by_node.png")
