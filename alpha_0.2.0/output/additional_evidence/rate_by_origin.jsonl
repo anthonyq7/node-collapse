@@ -1,0 +1,6 @@
+{"node": 0, "Seed": 0.8644, "Gen 0": null, "Gen 1": null, "Gen 2": null, "Gen 3": null, "Gen 4": null, "Gen 5": null}
+{"node": 1, "Seed": 0.9048, "Gen 0": 0.7486, "Gen 1": null, "Gen 2": null, "Gen 3": null, "Gen 4": null, "Gen 5": null}
+{"node": 2, "Seed": 0.8502, "Gen 0": 0.7253, "Gen 1": 0.7371, "Gen 2": null, "Gen 3": null, "Gen 4": null, "Gen 5": null}
+{"node": 3, "Seed": 0.9057, "Gen 0": 0.7287, "Gen 1": 0.6834, "Gen 2": 0.7001, "Gen 3": null, "Gen 4": null, "Gen 5": null}
+{"node": 4, "Seed": 0.8592, "Gen 0": 0.784, "Gen 1": 0.6561, "Gen 2": 0.6776, "Gen 3": 0.7248, "Gen 4": null, "Gen 5": null}
+{"node": 5, "Seed": 0.9341, "Gen 0": 0.803, "Gen 1": 0.665, "Gen 2": 0.6744, "Gen 3": 0.7246, "Gen 4": 0.6898, "Gen 5": null}

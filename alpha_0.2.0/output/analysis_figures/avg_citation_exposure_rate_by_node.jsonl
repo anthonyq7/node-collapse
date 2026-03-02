@@ -1,0 +1,6 @@
+{"node": 0, "seed_avg_rate": 0.8644, "generated_avg_rate": 0.0, "overall_avg_rate": 0.8644, "seed_count": 30, "generated_count": 0}
+{"node": 1, "seed_avg_rate": 0.9048, "generated_avg_rate": 0.7486, "overall_avg_rate": 0.8267, "seed_count": 30, "generated_count": 30}
+{"node": 2, "seed_avg_rate": 0.8502, "generated_avg_rate": 0.7312, "overall_avg_rate": 0.7708, "seed_count": 30, "generated_count": 60}
+{"node": 3, "seed_avg_rate": 0.9057, "generated_avg_rate": 0.7041, "overall_avg_rate": 0.7545, "seed_count": 30, "generated_count": 90}
+{"node": 4, "seed_avg_rate": 0.8592, "generated_avg_rate": 0.7107, "overall_avg_rate": 0.7404, "seed_count": 30, "generated_count": 120}
+{"node": 5, "seed_avg_rate": 0.9341, "generated_avg_rate": 0.7116, "overall_avg_rate": 0.7491, "seed_count": 30, "generated_count": 148}

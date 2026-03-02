@@ -1,0 +1,8 @@
+{"type": "summary", "total_citations": 4262, "valid": 4255, "known_but_unseen": 0, "hallucinated": 7, "extraction_mismatches": 0, "citation_id_mismatches": 0}
+{"paper": "N1P6", "type": "hallucinated", "citation": ["Davies", 2019]}
+{"paper": "N1P20", "type": "hallucinated", "citation": ["Rey", 2019]}
+{"paper": "N2P21", "type": "hallucinated", "citation": ["Woods", 2023]}
+{"paper": "N2P21", "type": "hallucinated", "citation": ["Johnston", 2019]}
+{"paper": "N3P22", "type": "hallucinated", "citation": ["Kay", 2025]}
+{"paper": "N4P6", "type": "hallucinated", "citation": ["Walker", 2023]}
+{"paper": "N4P5", "type": "hallucinated", "citation": ["Davidson", 2019]}

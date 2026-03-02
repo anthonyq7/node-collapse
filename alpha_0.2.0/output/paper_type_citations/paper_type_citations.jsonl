@@ -1,0 +1,7 @@
+{"node": 0, "position_paper": 0, "literature_review": 0, "seed_paper": 778, "total": 778}
+{"node": 1, "position_paper": 179, "literature_review": 165, "seed_paper": 404, "total": 748}
+{"node": 2, "position_paper": 223, "literature_review": 225, "seed_paper": 253, "total": 701}
+{"node": 3, "position_paper": 231, "literature_review": 246, "seed_paper": 209, "total": 686}
+{"node": 4, "position_paper": 239, "literature_review": 259, "seed_paper": 167, "total": 665}
+{"node": 5, "position_paper": 248, "literature_review": 295, "seed_paper": 134, "total": 677}
+{"node": "all", "position_paper": 1120, "literature_review": 1190, "seed_paper": 1945, "total": 4255}

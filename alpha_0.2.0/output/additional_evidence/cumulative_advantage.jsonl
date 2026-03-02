@@ -1,0 +1,5 @@
+{"transition": "0->1", "pearson_r": 0.9659, "n_papers": 60}
+{"transition": "1->2", "pearson_r": 0.988, "n_papers": 90}
+{"transition": "2->3", "pearson_r": 0.9932, "n_papers": 117}
+{"transition": "3->4", "pearson_r": 0.9942, "n_papers": 149}
+{"transition": "4->5", "pearson_r": 0.9958, "n_papers": 179}
