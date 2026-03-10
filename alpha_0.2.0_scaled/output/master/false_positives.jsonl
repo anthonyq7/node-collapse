@@ -1,0 +1,12 @@
+{"node": 0, "total_citations": 3123, "valid": 3116, "hallucinated": 7, "fp_rate": 0.0022}
+{"node": 1, "total_citations": 2960, "valid": 2957, "hallucinated": 3, "fp_rate": 0.001}
+{"node": 2, "total_citations": 2805, "valid": 2793, "hallucinated": 12, "fp_rate": 0.0043}
+{"node": 3, "total_citations": 2831, "valid": 2821, "hallucinated": 10, "fp_rate": 0.0035}
+{"node": 4, "total_citations": 2744, "valid": 2730, "hallucinated": 14, "fp_rate": 0.0051}
+{"node": 5, "total_citations": 2799, "valid": 2782, "hallucinated": 17, "fp_rate": 0.0061}
+{"node": 6, "total_citations": 2748, "valid": 2741, "hallucinated": 7, "fp_rate": 0.0025}
+{"node": 7, "total_citations": 2734, "valid": 2722, "hallucinated": 12, "fp_rate": 0.0044}
+{"node": 8, "total_citations": 2589, "valid": 2577, "hallucinated": 12, "fp_rate": 0.0046}
+{"node": 9, "total_citations": 2598, "valid": 2590, "hallucinated": 8, "fp_rate": 0.0031}
+{"node": 10, "total_citations": 2647, "valid": 2636, "hallucinated": 11, "fp_rate": 0.0042}
+{"node": 11, "total_citations": 2558, "valid": 2556, "hallucinated": 2, "fp_rate": 0.0008}

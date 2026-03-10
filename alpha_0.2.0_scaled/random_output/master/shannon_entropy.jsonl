@@ -1,0 +1,12 @@
+{"node": 0, "shannon_entropy": 6.883, "total_citations": 3116, "unique_papers_cited": 120}
+{"node": 1, "shannon_entropy": 7.8606, "total_citations": 2957, "unique_papers_cited": 240}
+{"node": 2, "shannon_entropy": 8.4023, "total_citations": 2793, "unique_papers_cited": 360}
+{"node": 3, "shannon_entropy": 8.7764, "total_citations": 2821, "unique_papers_cited": 478}
+{"node": 4, "shannon_entropy": 9.076, "total_citations": 2730, "unique_papers_cited": 595}
+{"node": 5, "shannon_entropy": 9.2917, "total_citations": 2782, "unique_papers_cited": 703}
+{"node": 6, "shannon_entropy": 9.463, "total_citations": 2741, "unique_papers_cited": 800}
+{"node": 7, "shannon_entropy": 9.6613, "total_citations": 2722, "unique_papers_cited": 912}
+{"node": 8, "shannon_entropy": 9.7426, "total_citations": 2577, "unique_papers_cited": 983}
+{"node": 9, "shannon_entropy": 9.8467, "total_citations": 2590, "unique_papers_cited": 1060}
+{"node": 10, "shannon_entropy": 9.9718, "total_citations": 2636, "unique_papers_cited": 1153}
+{"node": 11, "shannon_entropy": 10.0402, "total_citations": 2556, "unique_papers_cited": 1196}

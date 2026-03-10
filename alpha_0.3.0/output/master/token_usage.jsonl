@@ -1,0 +1,3 @@
+{"node": 0, "total_prompt_tokens": 223591, "total_completion_tokens": 97348, "total_tokens": 320939}
+{"node": 1, "total_prompt_tokens": 203232, "total_completion_tokens": 85398, "total_tokens": 288630}
+{"node": 2, "total_prompt_tokens": 194555, "total_completion_tokens": 80884, "total_tokens": 275439}

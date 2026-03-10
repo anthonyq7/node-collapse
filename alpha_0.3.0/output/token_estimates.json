@@ -1,0 +1,8 @@
+{
+  "mean_input_tokens_seed": 242.701,
+  "mean_input_tokens_llm": 195.926,
+  "mean_output_tokens": 2929.222,
+  "system_prompt_tokens": 108,
+  "averaged_user_prompt_tokens": 64.0,
+  "system_prompt_user_prompt_tokens": 172.0
+}

@@ -1,4 +1,8 @@
-import asyncio, json, os, random, re
+import asyncio
+import json
+import os
+import random
+import re
 from dotenv import load_dotenv
 from openai import AsyncOpenAI
 from typing import List, Dict
@@ -7,11 +11,12 @@ from faker import Faker
 
 load_dotenv()
 
-NODE_SIZE = 30
+NODE_SIZE = 120
+STRATUM_SIZE = 60
 POOLED_PAPERS = []
-TOTAL_NODES = 6
+TOTAL_NODES = 12
 MODEL = "gpt-5-mini"
-MAX_CONCURRENT = 30
+MAX_CONCURRENT = 120
 TARGET_LENGTH = 500
 SEED = 42
 PAPER_SET_LENGTH = 30
@@ -48,9 +53,9 @@ def create_set():
 
 def generate_prompts(node: int):
 
-    with open(f"alpha_0.2.0/prompts/N_{node}_inputs.jsonl", "w") as f:
+    with open(f"alpha_0.2.0_scaled/prompts/N_{node}_inputs.jsonl", "w") as f:
 
-        pos_indicies = set(random.sample(range(NODE_SIZE-1), 15))
+        pos_indicies = set(random.sample(range(NODE_SIZE-1), STRATUM_SIZE))
 
         for i in range(NODE_SIZE):
             paper_id = f"N{node}P{i}"
@@ -151,6 +156,16 @@ async def generate_paper(prompt: str, paper_id: str, paper_data: dict, semaphore
                 response_format={"type": "json_object"}
             )
 
+            usage = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0
+            }
+            if response.usage:
+                usage["prompt_tokens"] += response.usage.prompt_tokens
+                usage["completion_tokens"] += response.usage.completion_tokens
+                usage["total_tokens"] += response.usage.total_tokens
+
             content = response.choices[0].message.content
             if not content:
                 print(f"Empty response {paper_id}")
@@ -164,20 +179,28 @@ async def generate_paper(prompt: str, paper_id: str, paper_data: dict, semaphore
                     response_format={"type": "json_object"}
                 )
 
+                if response.usage:
+                    usage["prompt_tokens"] += response.usage.prompt_tokens
+                    usage["completion_tokens"] += response.usage.completion_tokens
+                    usage["total_tokens"] += response.usage.total_tokens
+
                 content = response.choices[0].message.content
                 if not content:
-                    return paper_id, paper_data, None
+                    return paper_id, paper_data, None, usage
             
-            if response.usage:
-                print(f"[{paper_id}] Input: {response.usage.prompt_tokens} tokens | Output: {response.usage.completion_tokens} tokens | Total: {response.usage.total_tokens} tokens")
+            print(
+                f"[{paper_id}] Input: {usage['prompt_tokens']} tokens | "
+                f"Output: {usage['completion_tokens']} tokens | "
+                f"Total: {usage['total_tokens']} tokens"
+            )
             
-            return paper_id, paper_data, content
+            return paper_id, paper_data, content, usage
 
         except Exception as e:
             print(f"API Error: {e}")
             print(f"Paper: {paper_id}")
             await asyncio.sleep(5)
-            return paper_id, paper_data, None
+            return paper_id, paper_data, None, None
 
 async def generate_node(node: int):
 
@@ -192,8 +215,9 @@ async def generate_node(node: int):
     wrapped_tasks = []
     node_citations = defaultdict(int)
     hallucinations = []
+    token_records = []
 
-    with open(f"alpha_0.2.0/prompts/N_{node}_inputs.jsonl", "r") as f:
+    with open(f"alpha_0.2.0_scaled/prompts/N_{node}_inputs.jsonl", "r") as f:
         for raw_line in f:
             line = json.loads(raw_line)
             paper_data = {
@@ -205,11 +229,14 @@ async def generate_node(node: int):
             }
 
             prompt = line.get("prompt")
-            wrapped_tasks.append(generate_paper(prompt=prompt, paper_id=str(line.get("id")), paper_data=paper_data))
+            paper_id = str(line.get("id"))
+            wrapped_tasks.append(
+                generate_paper(prompt=prompt, paper_id=paper_id, paper_data=paper_data)
+            )
 
-    with open(f"alpha_0.2.0/output/node_{node}/node_{node}.jsonl", "w") as f:
+    with open(f"alpha_0.2.0_scaled/output/node_{node}/node_{node}.jsonl", "w") as f:
         for task in asyncio.as_completed(wrapped_tasks):
-            paper_id, paper_data, json_response = await task
+            paper_id, paper_data, json_response, usage = await task
 
             if not json_response:
                 print(f"{paper_id} was empty...")
@@ -230,13 +257,24 @@ async def generate_node(node: int):
                 if cite in SEEN_AUTHOR_YEAR_PAIRS:
                     citation_id_set.add(SEEN_AUTHOR_YEAR_PAIRS[cite])
                 else:
-                    print(f"Warning: Potential hallucinated citation {paper_id} - {cite}")
+                    print(
+                        f"Warning: Potential hallucinated citation {paper_id} - {cite}"
+                    )
                     hallucinations.append({paper_id: cite})
                     
 
             for cited_id in citation_id_set:
                 node_citations[cited_id] += 1
             
+            if usage:
+                prompt_tokens = usage["prompt_tokens"]
+                completion_tokens = usage["completion_tokens"]
+                total_tokens = usage["total_tokens"]
+            else:
+                prompt_tokens = 0
+                completion_tokens = 0
+                total_tokens = 0
+
             toDump = {
                 "id": paper_id,
                 "author": paper_data.get("author"),
@@ -247,8 +285,18 @@ async def generate_node(node: int):
                 "body": body,
                 "papers_seen_id": paper_data.get("papers_seen_id"),
                 "citations": list(raw_citations),
-                "citation_ids": list(citation_id_set)
+                "citation_ids": list(citation_id_set),
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens
             }
+
+            token_records.append({
+                "id": paper_id,
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens
+            })
 
             new_paper = {
                 "author": paper_data.get("author"),
@@ -268,33 +316,68 @@ async def generate_node(node: int):
     print(30*"=")
     print("\n")
 
-    with open(f"alpha_0.2.0/output/node_{node}/node_{node}_stats.jsonl", "w") as f:
+    with open(f"alpha_0.2.0_scaled/output/node_{node}/node_{node}_stats.jsonl", "w") as f:
         for k, v in node_citations.items():
             f.write(json.dumps({k:v}) + "\n")
             print(f"{k}: {v}")
         
         f.flush()
     
-    with open(f"alpha_0.2.0/output/citation_counts/hallucinations.jsonl", "a") as f:
+    with open(f"alpha_0.2.0_scaled/output/citation_counts/hallucinations.jsonl", "a") as f:
         for item in hallucinations:
             f.write(json.dumps(item) + "\n")
         f.flush()
+
+    with open(f"alpha_0.2.0_scaled/output/node_{node}/node_{node}_token_usage.jsonl", "w") as f:
+        for record in token_records:
+            f.write(json.dumps(record) + "\n")
+        f.flush()
+
+    node_prompt_total = sum(
+        r["prompt_tokens"] for r in token_records
+    )
+    node_completion_total = sum(
+        r["completion_tokens"] for r in token_records
+    )
+    node_total = sum(
+        r["total_tokens"] for r in token_records
+    )
+
+    node_token_totals = {
+        "node": node,
+        "total_prompt_tokens": node_prompt_total,
+        "total_completion_tokens": node_completion_total,
+        "total_tokens": node_total
+    }
+
+    with open(f"alpha_0.2.0_scaled/output/node_{node}/node_{node}_token_totals.jsonl", "w") as f:
+        f.write(json.dumps(node_token_totals) + "\n")
+        f.flush()
+
+    print(
+        f"\nNode {node} Token Usage: "
+        f"Input: {node_prompt_total} | "
+        f"Output: {node_completion_total} | "
+        f"Total: {node_total}"
+    )
 
     for k, v in node_citations.items():
         CITATION_COUNTS[k] += v
 
     POOLED_PAPERS.sort(key=lambda p: p["author"])
 
+    return node_token_totals
+
 def get_seed():
     try:
         pooled = []
-        with open("alpha_0.2.0/buckets/bucket_100_249.jsonl") as f:
+        with open("alpha_0.2.0_scaled/buckets/bucket_50_500.jsonl") as f:
             for paper in f:
                 pooled.append(json.loads(paper))
             
         return pooled
     except FileNotFoundError as e:
-        print(f"alpha_0.2.0/buckets/bucket_100_249.jsonl not found...")
+        print(f"alpha_0.2.0_scaled/buckets/bucket_50_500.jsonl not found...")
         return None
 
 def standardize_seed() -> List[Dict]:
@@ -348,11 +431,11 @@ def standardize_seed() -> List[Dict]:
         POSSIBLE_PAPER_IDS.add(paper_id)
         SEEN_AUTHOR_YEAR_PAIRS[(fake_surname, fake_year)] = paper_id
     
-    with open("alpha_0.2.0/output/seed/seed_initial.jsonl", "w") as f:
+    with open("alpha_0.2.0_scaled/output/seed/seed_initial.jsonl", "w") as f:
         for item in arxiv_citation_count:
             f.write(json.dumps(item) + "\n")
 
-    with open("alpha_0.2.0/output/seed/seed.jsonl", "w") as f:
+    with open("alpha_0.2.0_scaled/output/seed/seed.jsonl", "w") as f:
         for item in arxiv_list:
             f.write(json.dumps(item) + "\n")   
 
@@ -371,31 +454,38 @@ async def run_experiment():
     random.seed(SEED)
 
     #Make output directories 
-    os.makedirs("alpha_0.2.0/output/seed", exist_ok=True)
-    os.makedirs("alpha_0.2.0/output/master", exist_ok=True)
-    os.makedirs("alpha_0.2.0/output/citation_counts", exist_ok=True)
-    os.makedirs("alpha_0.2.0/prompts", exist_ok=True)
-    open("alpha_0.2.0/output/citation_counts/hallucinations.jsonl", "w").close()
+    os.makedirs("alpha_0.2.0_scaled/output/seed", exist_ok=True)
+    os.makedirs("alpha_0.2.0_scaled/output/master", exist_ok=True)
+    os.makedirs("alpha_0.2.0_scaled/output/citation_counts", exist_ok=True)
+    os.makedirs("alpha_0.2.0_scaled/prompts", exist_ok=True)
+    open("alpha_0.2.0_scaled/output/citation_counts/hallucinations.jsonl", "w").close()
 
     #standardizes arXiv papers and adds them to the pool
     #Additionally, saves the initial citation counts + add another running citation count to citation_counts
     POOLED_PAPERS.extend(standardize_seed())
 
     for i in range(TOTAL_NODES):
-        os.makedirs(f"alpha_0.2.0/output/node_{i}", exist_ok=True)
+        os.makedirs(f"alpha_0.2.0_scaled/output/node_{i}", exist_ok=True)
     
-    for i in range(TOTAL_NODES):
-        await generate_node(i)
+    all_node_token_totals = []
 
-    with open("alpha_0.2.0/output/citation_counts/citation_counts.jsonl", "w") as f:
+    for i in range(TOTAL_NODES):
+        node_token_totals = await generate_node(i)
+        all_node_token_totals.append(node_token_totals)
+
+    with open("alpha_0.2.0_scaled/output/citation_counts/citation_counts.jsonl", "w") as f:
         for k, v in CITATION_COUNTS.items():
             f.write(json.dumps({k: v}) + "\n")
     
-    with open("alpha_0.2.0/output/master/kv_pairs.jsonl", "w") as f:
+    with open("alpha_0.2.0_scaled/output/master/kv_pairs.jsonl", "w") as f:
         for (author, year), paper_id in SEEN_AUTHOR_YEAR_PAIRS.items():
-            f.write(json.dumps({"author": author, "year": year, "id": paper_id}) + "\n")
+            record = {"author": author, "year": year, "id": paper_id}
+            f.write(json.dumps(record) + "\n")
 
-    #save citation counts
+    with open("alpha_0.2.0_scaled/output/master/token_usage.jsonl", "w") as f:
+        for totals in all_node_token_totals:
+            f.write(json.dumps(totals) + "\n")
+
     print("Finished generating nodes")
 
 if __name__ == "__main__":
