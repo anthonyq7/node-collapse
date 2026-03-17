@@ -174,7 +174,7 @@ def bulk_download_with_audit(search_query: str, total: int, out_dir: str, audit_
 # Example:
 bulk_download_with_audit(
     search_query="all:knowledge distillation",
-    total=50,
+    total=2000,
     out_dir="electron_pdfs",
     audit_csv_path="arxiv_download_audit.csv",
 )
