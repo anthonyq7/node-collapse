@@ -44,3 +44,48 @@ Thumbs.db
 
 # Output files (uncomment if you want to ignore generated outputs)
 # output/
+
+# Notebooks for inspection only 
+
+arxiv_kd_metadata.ipynb
+arxiv_to_s2_mapping.ipynb
+citation_fk_rich.ipynb
+citation.ipynb
+GPTZeroAPI.ipynb
+minimal_hypotheses_tester.ipynb
+new_papers_from_references.ipynb
+Normalized_ArXiv_Amount_Actual.ipynb
+Normalized_ArXiv_Amount_theoretical.ipynb
+paper_table_full_rich.ipynb
+raw_reference.ipynb
+# plots.ipynb
+analysis_outdegree.ipynb
+
+# Large csv
+paper_table_full_rich.csv
+paper_table_full_rich_batch_500.csv
+analysis_outdegree.csv
+referenced_papers_full.csv
+raw_reference.csv
+
+arxiv_to_s2_mapping_batch_500.csv
+citation_batch_500.csv
+citation_fk_rich_batch_500.csv
+new_papers_from_references_batch_500.csv
+raw_reference_batch_500.csv
+
+# Directories
+neurips_outputs/
+full_texts/
+electron_pdfs/
+
+# Temporary Files
+pdf0.pdf
+abstract0.txt
+abstract0response.txt
+pdf0response.txt
+
+api_key.txt
+api_key.ipynb
+
+backup_citation_pipeline_batch_500.tar.gz

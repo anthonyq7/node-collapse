@@ -12,13 +12,15 @@ ARXIV_CSV = "arxiv_kd_metadata.csv"
 OUT_CSV = "arxiv_to_s2_mapping.csv"
 PROGRESS_JSON = "arxiv_to_s2_progress.json"
 
+api_key = open("api_key.txt", "r").readline().strip()
+
 API = "https://api.semanticscholar.org/graph/v1"
 HEADERS = {
     # Uncomment if you have an API key:
-    # "x-api-key": "YOUR_API_KEY"
+    "x-api-key": api_key
 }
 
-SLEEP_SECONDS = 2.5
+SLEEP_SECONDS = 1.1
 MAX_RETRIES = 6
 TIMEOUT = 30
 FLUSH_EVERY = 20

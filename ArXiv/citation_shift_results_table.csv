@@ -1,0 +1,12 @@
+metric,value
+Mean citation age gap (pre-2023),4.460396304841025
+Mean citation age gap (post-2023),5.16763031496674
+Median citation age gap (pre-2023),4.181818181818182
+Median citation age gap (post-2023),4.91925925925926
+Mann-Whitney U p-value (one-sided),7.208894096593034e-40
+KS p-value (one-sided),0.9406006308483198
+Gini of cited-paper frequencies (pre-2023),0.5833721684397467
+Gini of cited-paper frequencies (post-2023),0.5195103061190541
+Mean reference count (pre-2023),48.53867717251307
+Mean reference count (post-2023),55.966900803476676
+Reference count MW p-value (two-sided),6.11347301209206e-300
