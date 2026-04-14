@@ -1,0 +1,12 @@
+{"node": 0, "top10_share_llm": 29.93, "top10_share_rnd": 15.44, "z": 8.3565, "p_value": 0.0, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 1, "top10_share_llm": 29.27, "top10_share_rnd": 19.36, "z": 5.4895, "p_value": 2e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 2, "top10_share_llm": 31.9, "top10_share_rnd": 21.3, "z": 5.6124, "p_value": 1e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 3, "top10_share_llm": 33.12, "top10_share_rnd": 22.9, "z": 5.3272, "p_value": 5e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 4, "top10_share_llm": 35.0, "top10_share_rnd": 25.26, "z": 4.9308, "p_value": 4.1e-07, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 5, "top10_share_llm": 36.11, "top10_share_rnd": 25.43, "z": 5.3226, "p_value": 5e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 6, "top10_share_llm": 35.18, "top10_share_rnd": 28.49, "z": 3.2854, "p_value": 0.00050927, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 7, "top10_share_llm": 33.81, "top10_share_rnd": 29.3, "z": 2.2164, "p_value": 0.01333207, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 0}
+{"node": 8, "top10_share_llm": 37.11, "top10_share_rnd": 29.75, "z": 3.5461, "p_value": 0.00019549, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 9, "top10_share_llm": 42.62, "top10_share_rnd": 31.09, "z": 5.4078, "p_value": 3e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 10, "top10_share_llm": 39.86, "top10_share_rnd": 31.23, "z": 4.0947, "p_value": 2.114e-05, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 11, "top10_share_llm": 40.97, "top10_share_rnd": 31.9, "z": 4.3138, "p_value": 8.02e-06, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}

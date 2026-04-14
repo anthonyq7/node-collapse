@@ -1,0 +1,12 @@
+{"node": 0, "fn_llm": 0.133333, "fn_rnd": 0.0, "z": 4.1404, "p_value": 1.734e-05, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 1, "fn_llm": 0.154167, "fn_rnd": 0.0125, "z": 5.6149, "p_value": 1e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 2, "fn_llm": 0.202778, "fn_rnd": 0.044444, "z": 6.454, "p_value": 0.0, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 3, "fn_llm": 0.264033, "fn_rnd": 0.110417, "z": 6.1028, "p_value": 0.0, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 4, "fn_llm": 0.301003, "fn_rnd": 0.183946, "z": 4.7228, "p_value": 1.16e-06, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 5, "fn_llm": 0.359944, "fn_rnd": 0.22409, "z": 5.6454, "p_value": 1e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 6, "fn_llm": 0.369249, "fn_rnd": 0.291768, "z": 3.3474, "p_value": 0.00040783, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 7, "fn_llm": 0.396406, "fn_rnd": 0.321353, "z": 3.4029, "p_value": 0.00033333, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 8, "fn_llm": 0.433493, "fn_rnd": 0.368421, "z": 3.035, "p_value": 0.0012027, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 9, "fn_llm": 0.50218, "fn_rnd": 0.389712, "z": 5.4185, "p_value": 3e-08, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 10, "fn_llm": 0.491186, "fn_rnd": 0.40625, "z": 4.2659, "p_value": 9.96e-06, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}
+{"node": 11, "fn_llm": 0.490895, "fn_rnd": 0.421851, "z": 3.5584, "p_value": 0.00018654, "alpha_bonferroni": 0.004167, "reject_h0_bonferroni": 1}

@@ -1,0 +1,11 @@
+{"node": 1, "seed_rate": 0.354017, "llm_rate": 0.274095, "z": 5.1653, "p_value": 1.2e-07, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 2, "seed_rate": 0.432574, "llm_rate": 0.244101, "z": 11.4426, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 3, "seed_rate": 0.484144, "llm_rate": 0.240392, "z": 13.9886, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 4, "seed_rate": 0.543226, "llm_rate": 0.232212, "z": 16.7504, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 5, "seed_rate": 0.548077, "llm_rate": 0.240591, "z": 15.3304, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 6, "seed_rate": 0.595745, "llm_rate": 0.239377, "z": 16.516, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 7, "seed_rate": 0.574419, "llm_rate": 0.250473, "z": 13.9036, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 8, "seed_rate": 0.574413, "llm_rate": 0.252409, "z": 13.1734, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 9, "seed_rate": 0.614213, "llm_rate": 0.243606, "z": 15.3922, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 10, "seed_rate": 0.607143, "llm_rate": 0.25337, "z": 13.6587, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
+{"node": 11, "seed_rate": 0.614841, "llm_rate": 0.26319, "z": 12.5035, "p_value": 0.0, "alpha_bonferroni": 0.004545, "reject_h0_bonferroni": 1}
